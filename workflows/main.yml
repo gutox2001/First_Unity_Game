@@ -1,0 +1,115 @@
+name: Deploy BuildWebGL to Firebase 😎
+
+on: [push, pull_request]
+
+jobs:
+
+  build:
+
+    name: Build my project ✨
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout (without LFS)
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Git LFS
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v3
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      # Cache
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # Test
+      - name: Run tests
+        uses: game-ci/unity-test-runner@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          customParameters: -nographics
+
+      # Build
+      - name: BuildProject
+        uses: game-ci/unity-builder@v2
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+          allowDirtyBuild: true
+
+      # Output
+      - uses: actions/upload-artifact@v3
+        with:
+          name: BuildWebGL
+          path: build
+      
+      - name: Make directory BuildWebGL
+        run: |
+          mkdir BuildWebGL
+          
+      - name: Copying
+        run: |
+          cp -r build/WebGL/WebGL/* BuildWebGL/
+
+      - name: Change working directory
+        run: |
+          cd BuildWebGL
+
+      - name: Commit artifact
+        run: |
+          git config --local user.email "aroldo.simoes@ufv.br"
+          git config --local user.name "gutox2001"
+          git add ./BuildWebGL
+          git commit -m "Add build"
+      - name: Push changes # push the output folder to your repo
+        uses: ad-m/github-push-action@master
+        with:
+          force: true 
+      
+      - name: Display structure of downloaded files
+        run: |
+          ls
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Display structure of downloaded files
+        run: |
+          ls
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: BuildWebGL
+          path: BuildWebGL
+          
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting:testes-praticas
+
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}

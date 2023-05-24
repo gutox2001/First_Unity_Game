@@ -1,0 +1,12 @@
+{
+  "hosting": 
+  {
+    "site" : "testes-praticas",
+    "public": "BuildWebGL",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
