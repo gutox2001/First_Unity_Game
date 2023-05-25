@@ -3,6 +3,7 @@
   {
     "site" : "testes-praticas",
     "public": "BuildWebGL",
+    "path" : "BuildWebGL/",
     "ignore": [
       "firebase.json",
       "**/.*",

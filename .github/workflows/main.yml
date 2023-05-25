@@ -1,4 +1,4 @@
-name: Deploy BuildWebGL to Firebase 😎
+name: Deploy BuildWebGL to Firebase Test 
 
 on: [push, pull_request]
 
