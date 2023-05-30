@@ -15,7 +15,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          ref: feature/004-inclusao-de-deploy-automatico
+          ref: main
 
       # Git LFS
       - name: Create LFS file list
@@ -102,7 +102,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: feature/004-inclusao-de-deploy-automatico
+          ref: main
       - name: Display structure of downloaded files
         run: |
           ls
@@ -119,4 +119,3 @@ jobs:
 
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          
