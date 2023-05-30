@@ -1,9 +1,8 @@
 {
   "hosting": 
   {
-    "site" : "testes-praticas",
+    "site" : "testesimulacoes",
     "public": "BuildWebGL",
-    "path" : "BuildWebGL/",
     "ignore": [
       "firebase.json",
       "**/.*",

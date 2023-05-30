@@ -1,6 +1,8 @@
 name: Deploy BuildWebGL to Firebase Test 
 
-on: [push, pull_request]
+on: [push]
+  #pull_request:
+  #  branches: [main]
 
 jobs:
 
@@ -12,6 +14,8 @@ jobs:
       # Checkout (without LFS)
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          ref: feature/004-inclusao-de-deploy-automatico
 
       # Git LFS
       - name: Create LFS file list
@@ -97,6 +101,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: feature/004-inclusao-de-deploy-automatico
       - name: Display structure of downloaded files
         run: |
           ls
@@ -109,7 +115,8 @@ jobs:
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only hosting:testes-praticas
+          args: deploy --only hosting:testesimulacoes
 
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          
